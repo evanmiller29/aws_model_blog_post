@@ -9,6 +9,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.externals import joblib
 from sklearn.metrics import r2_score
 
+import zipfile
 # Defining global variables
 
 rand_seed = 42
@@ -50,7 +51,7 @@ preprocessor = ColumnTransformer(
 
 model = Pipeline(steps=[
     ('preprocessor', preprocessor),
-    ('regressor', ElasticNet())
+    ('regressor', ElasticNet(random_state=rand_seed))
     ]
 )
 
@@ -58,3 +59,9 @@ model.fit(X_train, y_train)
 preds = model.predict(X_test)
 
 print(r2_score(y_test, preds))
+# Ha thank god this isn't a Kaggle competition, this model is horrible.
+
+joblib.dump(model, 'house_price_model.pkl')
+
+# Zipping model file for the lambda layers
+zipfile.ZipFile('model.zip', mode='w').write("house_price_model.pkl")
